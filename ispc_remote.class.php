@@ -41,9 +41,17 @@ class ispc_remote
 		}
 		
 		if (is_null($this->_soap_client)) {
-			$this->_soap_client = new SoapClient(null, array('location' => $ispc_config['soap_url'].'index.php',
-                                     			 			 'uri'      => $ispc_config['soap_url']));
-			
+			$this->_soap_client = new SoapClient(null, array(
+				'location' => $ispc_config['soap_url'] . 'index.php',
+				'uri' => $ispc_config['soap_url'],
+				'stream_context' => stream_context_create(array(
+					'ssl' => array(
+						'verify_peer' => false,
+						'verify_peer_name' => false,
+						'allow_self_signed' => true
+					)
+				))
+			));
 			try {
 				$this->_session_id = $this->_soap_client->login($ispc_config['remote_soap_user'],$ispc_config['remote_soap_pass']);
 			} 
